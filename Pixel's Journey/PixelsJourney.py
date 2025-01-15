@@ -20,7 +20,6 @@ pygame.display.set_caption("Pixel's Journey")
 font = pygame.font.SysFont('Courier New', 70)
 font_score = pygame.font.SysFont('Courier New', 30)
 white = (255, 255, 255)
-black = (0, 0, 0)
 
 tile_size = 50
 game_over = 0
@@ -35,12 +34,16 @@ restart_img = pygame.image.load('img/restart_btn.png')
 start_img = pygame.image.load('img/start_btn.png')
 exit_img = pygame.image.load('img/exit_btn.png')
 
+#sounds
 coin_fx = pygame.mixer.Sound('img/coin.wav')
 coin_fx.set_volume(0.5)
 jump_fx = pygame.mixer.Sound('img/jump.wav')
 jump_fx.set_volume(0.5)
 game_over_fx = pygame.mixer.Sound('img/game_over.wav')
 game_over_fx.set_volume(0.5)
+
+pygame.mixer.music.load('img/music.wav')
+pygame.mixer.music.play(-1, 0.0, 10000)
 
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
@@ -51,6 +54,7 @@ def reset_level(level):
     blob_group.empty()
     lava_group.empty()
     exit_group.empty()
+    coin_group.empty()
 
     if path.exists(f'level{level}'):
         pickle_in = open(f'level{level}', 'rb')
@@ -58,11 +62,6 @@ def reset_level(level):
     world = World(world_data)
 
     return world
-
-
-#sounds
-pygame.mixer.music.load('img/music.wav')
-pygame.mixer.music.play(-1, 0.0, 10000)
 
 def draw_grid():
     for line in range (0, 20):
@@ -187,7 +186,7 @@ class Player():
         elif game_over == -1:
             self.image = self.dead_image
             draw_text('GAME OVER!', font, white, (screen_width // 2) - 200, screen_height // 2)
-            if self.rect.y > 200:
+            if self.rect.y > -50:
                 self.rect.y -= 5
 
         #draw player
@@ -315,10 +314,6 @@ lava_group = pygame.sprite.Group()
 exit_group = pygame.sprite.Group()
 coin_group = pygame.sprite.Group()
 
-#Dummy coin to make score look better
-score_coin = Coin(tile_size // 2, tile_size // 2)
-coin_group.add(score_coin)
-
 #load in level data and create world
 if path.exists(f'level{level}'):
     pickle_in = open(f'level{level}','rb')
@@ -352,6 +347,9 @@ while run:
                 score += 1
                 coin_fx.play()
             draw_text('X' + str(score), font_score, white, tile_size - 10, 10)
+            # Dummy coin to make score look better
+            score_coin = Coin(tile_size // 2, tile_size // 2)
+            coin_group.add(score_coin)
 
         blob_group.draw(screen)
         lava_group.draw(screen)
@@ -364,9 +362,13 @@ while run:
         if game_over == -1:
             if restart_button.draw():
                 world_data = []
+                level = 1
                 world = reset_level(level)
                 game_over = 0
                 score = 0
+                # Dummy coin to make score look better
+                score_coin = Coin(tile_size // 2, tile_size // 2)
+                coin_group.add(score_coin)
 
         #level completed go to the next
         if game_over == 1:
