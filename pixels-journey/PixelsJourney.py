@@ -1,7 +1,7 @@
 import pygame
 from pygame import mixer
 import pickle
-from os import path
+from os import path, listdir
 
 #game variables
 pygame.mixer.pre_init(44100, -16, 2, 512)
@@ -25,7 +25,10 @@ tile_size = 50
 game_over = 0
 main_menu = True
 level = 1
-max_levels = 2
+
+# counting existing level pickles
+max_levels = sum(1 for file in listdir("./levels") if file.startswith("level") and path.isfile(path.join("./levels", file)))
+
 score = 0
 
 #images
