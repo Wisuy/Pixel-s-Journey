@@ -23,5 +23,5 @@ world_data = [
             [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             ]
 
-with open("level2", "wb") as file:
+with open("./levels/level3", "wb") as file:
     pickle.dump(world_data, file)

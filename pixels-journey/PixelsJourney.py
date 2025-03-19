@@ -56,8 +56,8 @@ def reset_level(level):
     exit_group.empty()
     coin_group.empty()
 
-    if path.exists(f'level{level}'):
-        pickle_in = open(f'level{level}', 'rb')
+    if path.exists(f'./levels/level{level}'):
+        pickle_in = open(f'./levels/level{level}', 'rb')
         world_data = pickle.load(pickle_in)
     world = World(world_data)
 
@@ -315,8 +315,8 @@ exit_group = pygame.sprite.Group()
 coin_group = pygame.sprite.Group()
 
 #load in level data and create world
-if path.exists(f'level{level}'):
-    pickle_in = open(f'level{level}','rb')
+if path.exists(f'./levels/level{level}'):
+    pickle_in = open(f'./levels/level{level}','rb')
     world_data = pickle.load(pickle_in)
 world = World(world_data)
 
@@ -341,8 +341,7 @@ while run:
         world.draw()
 
         if game_over == 0:
-            for i in range(0,4):
-                blob_group.update()
+            blob_group.update()
             #update score
             if pygame.sprite.spritecollide(player, coin_group, True):
                 score += 1
