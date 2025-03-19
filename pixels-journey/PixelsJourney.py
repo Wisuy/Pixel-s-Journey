@@ -2,6 +2,7 @@ import pygame
 from pygame import mixer
 import pickle
 from os import path, listdir
+from time import time
 
 #game variables
 pygame.mixer.pre_init(44100, -16, 2, 512)
@@ -25,9 +26,11 @@ tile_size = 50
 game_over = 0
 main_menu = True
 level = 1
+difficulty = 1 # default to easy
+difficulty_selected = False
 
 # counting existing level pickles
-max_levels = sum(1 for file in listdir("./levels") if file.startswith("level") and path.isfile(path.join("./levels", file)))
+max_levels = 3
 
 score = 0
 
@@ -35,6 +38,11 @@ score = 0
 bg_img = pygame.transform.scale(pygame.image.load('img/sky.png'), (screen_width, screen_height))
 restart_img = pygame.image.load('img/restart_btn.png')
 start_img = pygame.image.load('img/start_btn.png')
+difficulty_assets = {
+    "easy": pygame.image.load('img/difficulty_easy.png'),
+    "normal" : pygame.image.load('img/difficulty_normal.png'),
+    "hard": pygame.image.load('img/difficulty_hard.png')
+}
 exit_img = pygame.image.load('img/exit_btn.png')
 
 #sounds
@@ -327,10 +335,15 @@ world = World(world_data)
 restart_button = Button(screen_width // 2 - 50, screen_height // 2 + 100, restart_img)
 start_button = Button(screen_width // 2 - 350, screen_height // 2, start_img)
 exit_button = Button(screen_width // 2 + 150, screen_height // 2, exit_img)
+difficulty_buttons = {
+    "easy": Button(screen_width // 2 - 50, screen_height // 2 + 30, difficulty_assets["easy"]),
+    "normal": Button(screen_width // 2 - 50, screen_height // 2 + 70, difficulty_assets["normal"]),
+    "hard": Button(screen_width // 2 - 50, screen_height // 2 + 110, difficulty_assets["hard"])
+}
 
 run = True
 while run:
-
+    start_fps = time()
     clock.tick(fps)
 
     screen.blit(bg_img, (0, 0))
@@ -339,12 +352,30 @@ while run:
         if exit_button.draw():
             run = False
         if start_button.draw():
+            screen.blit(bg_img, (0, 0))
             main_menu = False
+
+    elif main_menu == False and difficulty_selected == False:
+        if difficulty_buttons["easy"].draw():
+            difficulty = 1
+            difficulty_selected = True
+            max_levels = 3
+        if difficulty_buttons["normal"].draw():
+            difficulty = 3
+            difficulty_selected = True
+            max_levels = 4
+        if difficulty_buttons["hard"].draw():
+            difficulty = 5
+            difficulty_selected = True
+            max_levels = 5
     else:
         world.draw()
 
         if game_over == 0:
-            blob_group.update()
+            
+            
+            for i in range(0, difficulty):
+                blob_group.update()
             #update score
             if pygame.sprite.spritecollide(player, coin_group, True):
                 score += 1
@@ -398,5 +429,6 @@ while run:
             run = False
 
     pygame.display.update()
+    print(f"FPS: { 1 / (time() - start_fps):2f}")
 
 pygame.quit()
