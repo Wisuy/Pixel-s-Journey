@@ -341,7 +341,8 @@ while run:
         world.draw()
 
         if game_over == 0:
-            blob_group.update()
+            for i in range(0,4):
+                blob_group.update()
             #update score
             if pygame.sprite.spritecollide(player, coin_group, True):
                 score += 1
