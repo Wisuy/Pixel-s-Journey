@@ -3,11 +3,14 @@ from pygame import mixer
 import pickle
 from os import path, listdir
 from time import time
+import math
+import controls
 
 #game variables
 pygame.mixer.pre_init(44100, -16, 2, 512)
 mixer.init()
 pygame.init()
+device = controls.select_controller()
 
 clock = pygame.time.Clock()
 fps = 60
@@ -117,29 +120,30 @@ class Player():
         walk_cooldown = 20
 
         if game_over == 0:
-            #get key presses
-            key = pygame.key.get_pressed()
-            if key[pygame.K_SPACE] and self.jumped == False:
+            control = controls.controller(device)
+
+            if control["JUMP"] and self.jumped == False:
                 jump_fx.play()
                 self.jumped = True
                 self.vel_y = -15
-            if key[pygame.K_SPACE] == False and self.in_air == False:
+            if control["JUMP"] == False and self.in_air == False:
                 self.jumped = False
-            if key[pygame.K_LEFT]:
+            if control["LEFT"]:
                 dx -= 5
                 self.counter += 5
                 self.direction = -1
-            if key[pygame.K_RIGHT]:
+            if control["RIGHT"]:
                 dx += 5
                 self.counter += 5
                 self.direction = 1
-            if key[pygame.K_LEFT] == False and key[pygame.K_RIGHT] == False:
+            if control["LEFT"] == False and control["RIGHT"] == False:
                 self.counter = 0
                 self.index = 0
                 if self.direction == 1:
                     self.image = self.images_right[self.index]
                 if self.direction == -1:
                     self.image = self.images_left[self.index]
+            #get key presses
 
             #animation
             if self.counter > walk_cooldown:
@@ -429,6 +433,6 @@ while run:
             run = False
 
     pygame.display.update()
-    print(f"FPS: { 1 / (time() - start_fps):2f}")
+    pygame.display.set_caption(f"FPS: { math.floor(1 / (time() - start_fps))}")
 
 pygame.quit()
