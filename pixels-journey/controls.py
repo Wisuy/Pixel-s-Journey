@@ -2,7 +2,12 @@ import pygame
 import serial
 import serial.tools.list_ports
 
-def arduino_controller(serial_port):
+try:
+    serial_port = serial.Serial("COM3", 9600, timeout=0.1)
+except:
+    serial_port=None
+
+def arduino_controller():
     control = {
         "JUMP": False,
         "LEFT": False,
@@ -59,7 +64,6 @@ def select_controller():
 
 def controller(device):
     if device == "arduino":
-        serial_port = serial.Serial("COM3", 9600, timeout=0.1)
-        return arduino_controller(serial_port)
+        return arduino_controller()
     else:
         return keyboard_controller()
