@@ -2,10 +2,11 @@ import pygame
 import serial
 import serial.tools.list_ports
 
+
 try:
     serial_port = serial.Serial("COM3", 9600, timeout=0.1)
 except:
-    serial_port=None
+    serial_port = None
 
 def arduino_controller():
     control = {
@@ -53,10 +54,9 @@ def select_controller():
     for port in ports:
         if "Arduino" in port.description or "CH340" in port.description:
             arduino_port = port.device
-            print(port.description)
             break
 
-    if arduino_port:
+    if arduino_port and serial_port:
         return "arduino"
     else:
         return "keyboard"
