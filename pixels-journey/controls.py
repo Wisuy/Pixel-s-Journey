@@ -5,7 +5,6 @@ import serial.tools.list_ports
 with open("./port.txt", "r") as f:
     port = f.readline()
 try:
-    print(port)
     serial_port = serial.Serial(port, 9600, timeout=0.1)
 except:
     serial_port = None
